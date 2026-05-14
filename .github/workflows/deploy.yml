@@ -157,7 +157,12 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          # 关键修复：在这里也显式注入 JWT_SECRET，防止脚本检测不到而尝试交互生成
+          JWT_SECRET: ${{ secrets.JWT_SECRET }} 
+          # 如果你的脚本里确实用到了 Deno，也请加上这个（需先在 GitHub Secrets 补充）
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }} 
         run: |
+          # 增加 --non-interactive 或类似参数（取决于你的 package.json 里的脚本具体内容）
           pnpm run deploy:workers:action
           echo "Deploy completed"
 
